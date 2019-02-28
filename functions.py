@@ -21,60 +21,6 @@ def loadMaps():
               maps.append(map)
   return maps
 
-def loadGame(maps):
-  """ Récupération de la partie sauvegardée 
-      On renvoie la map s'il y a une partie sauvegardée, None sinon
-  """
-  try:
-    with open('save', 'rb') as file:
-      unpickler = pickle.Unpickler(file)
-      try:
-        game = unpickler.load()
-        # game est un objet avec un attribut 'name' (nom de la map) et un attribut 'robot' (position du robot)
-        for map in maps:
-          if map.name == game['name']:
-            # ici on va copier l'objet map, pour ne pas changer la position du robot dans la map originale
-            gridString = map.maze.__repr__()
-            savedMap = Map(game["name"], gridString)
-            savedMap.maze.robot = game["robot"]
-            return savedMap
-        print "Cannot find the saved map " + game.name
-        return None
-      except:
-        print "Whoops !"
-        return None
-  except:
-    print "There is no saved game"
-    return None
-
-def continueGame(map):
-  """ On demande au joueur s'il veut continuer sa partie sauvegardée 
-      On renvoie la map s'il répond oui, None sinon
-  """
-  while 1:
-    answer = raw_input("You were on the map {}, do you want to continue this game ? (y/n)\n{}".format(map.name, map.maze))
-    if answer.lower() == "y":
-      return map
-    elif answer.lower() == "n":
-      return None
-    else:
-      print "Please enter y or n"
-
-
-def saveGame(map):
-  """ Sauvegarde de la partie : on a besoin de stocker deux informations :
-        - name : nom de la map
-        - robot : position du robot
-  """
-  game = {
-    "name": map.name,
-    "robot": map.maze.robot
-  }
-  with open('save', 'wb') as file:
-    pickler = pickle.Pickler(file)
-    pickler.dump(game)
-
-
 def chooseMap(maps):
   """ Choix de la carte """
   print("Existing mazes:")
