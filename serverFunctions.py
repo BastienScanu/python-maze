@@ -26,16 +26,15 @@ def chooseMap(maps):
   for i, map in enumerate(maps):
       print("  {} - {}".format(i + 1, map.name))
   while 1:
-    i = raw_input("Enter the number of the maze you want to play")
+    i = input("Enter the number of the maze you want to play")
     try:
       i = int(i)
-      print maps[i-1]
       if i <= len(maps):
         chosenMap = maps[i - 1]
-        print "You chose the map {}:\n{}".format(chosenMap.name, chosenMap.maze)
+        print("You chose the map {}:\n{}".format(chosenMap.name, chosenMap.maze))
         return chosenMap
       else:
-        print "The number must be between 1 and {}.".format(len(maps))
+        print("The number must be between 1 and {}.".format(len(maps)))
     except:
-      print "You must enter a digit between 1 and {}.".format(len(maps))
+      print("You must enter a digit between 1 and {}.".format(len(maps)))
   

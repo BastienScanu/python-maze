@@ -9,11 +9,11 @@ def pickYourMove(map):
   done = False    # True quand le tour de jeu est fini
   endGame = False # True si le joueur quitte la partie
   while not done:
-    move = raw_input("What is your move?")
+    move = input("What is your move?")
 
     if move.upper() == "Q":
       # Fin du jeu
-      print "Thanks for playing ! Your game has been saved, see you later !"
+      print("Thanks for playing ! Your game has been saved, see you later !")
       endGame = True
       done = True
 
@@ -34,11 +34,11 @@ def pickYourMove(map):
             done = True
             print "c"
           except:
-            print "You must enter a valid integer after the direction"
+            print("You must enter a valid integer after the direction")
         else:
           # On déplace le robot d'une case dans la direction demandée
           map.maze.moveRobot(direction)
           done = True
       else:
-        print "You must enter a valid direction : E, O, N or S. To quit, press Q."
+        print("You must enter a valid direction : E, O, N or S. To quit, press Q.")
   return endGame or map.maze.done

@@ -74,7 +74,7 @@ class Maze:
       elif direction.upper() == "S":
         i, j = self.robot[0] + 1, self.robot[1]
       else:
-        print "You must enter a valid direction : E, O, N or S. To quit, press Q."
+        print("You must enter a valid direction : E, O, N or S. To quit, press Q.")
 
       try:
         # on vérifie à quel type de case correspond la destination
@@ -82,17 +82,17 @@ class Maze:
         if destination.canPass:
           # Si on peut passer, on déplace le robot
           self.robot = (i, j)
-          print self
+          print(self)
         if destination.message:
           # On affiche le message s'il y en a un
-          print destination.message
+          print(destination.message)
         # Si la case met fin à la partie, on passe le labyrinthe à done
         self.done = destination.endGame
         # On renvoie un booléen : si la case est un obstacle, inutile de continuer d'aller dans cette direction
         return not destination.canPass
 
       except:
-        print "You cannot go out of the map!"
+        print("You cannot go out of the map!")
         return True
 
       
