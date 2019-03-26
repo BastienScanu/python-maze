@@ -13,8 +13,12 @@ import select
 
 host = ''
 port = 42000
-onGoingGame = True
-playerNumber = 1
+# statut de la partie :
+#  - WAITING tant que les joueurs se connectent et que la partie n'a pas encore commencé
+#  - PLAYING pendant toute la durée de la partie
+#  - FINISHED quand la partie est terminée
+gameStatus = "WAITING"
+playerNumber = 0
 
 
 # On charge les maps existantes
@@ -23,26 +27,33 @@ maps = loadMaps()
 # On propose de choisir une carte
 map = chooseMap(maps)
 
-print "Waiting for clients..."
+print("Waiting for players...")
 
 # On établit la connexion
 mainConnection = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 mainConnection.bind((host, port))
 mainConnection.listen(5)
-print "Server listening on port {}".format(port)
+print("Server listening on port {}".format(port))
 
 players = []
-while onGoingGame:
+while gameStatus != "FINISHED":
     # On va vérifier que de nouveaux clients ne demandent pas à se connecter
     # Pour cela, on écoute la connexion_principale en lecture
     # On attend maximum 50ms
     askToPlay, wlist, xlist = select.select([mainConnection], [], [], 0.05)
     
     for connection in askToPlay:
-        playerConnection, info = connection.accept()
-        # On ajoute le socket connecté à la liste des clients
-        players.append(playerConnection)
-    
+        if gameStatus == "WAITING":
+          playerConnection, info = connection.accept()
+          playerNumber = playerNumber + 1
+          message = ("Welcome, you are player" + str(playerNumber)).encode()
+          playerConnection.send(message)
+          print("Player {} is connected !".format(playerNumber))
+          # On ajoute le socket connecté à la liste des clients
+          players.append(playerConnection)
+        else:
+          print("Connexion refused, the game already started")
+      
     # Maintenant, on écoute la liste des clients connectés
     # Les clients renvoyés par select sont ceux devant être lus (recv)
     # On attend là encore 50ms maximum

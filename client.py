@@ -2,22 +2,31 @@
 
 import socket
 
+from threading import Thread
+
 host = "localhost"
 port = 42000
-serverConnexion = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-serverConnexion.connect((host, port))
+serverConnection = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+serverConnection.connect((host, port))
 
-print "Connection established on port {}".format(port)
+print("Connection established on port {}".format(port))
+
+def listen():
+    """Code à exécuter pendant l'exécution du thread."""
+    while True:
+        receivedMessage = serverConnection.recv(1024)
+        print(receivedMessage.decode())
+
+listener = Thread(target=listen)
+listener.start()
 
 messageToSend = b""
 while messageToSend != b"fin":
-    messageToSend = raw_input("> ")
+    messageToSend = input("> ")
     # Peut planter si vous tapez des caractères spéciaux
     messageToSend = messageToSend.encode()
     # On envoie le message
-    serverConnexion.send(messageToSend)
-    receivedMessage = serverConnexion.recv(1024)
-    print(receivedMessage.decode()) # Là encore, peut planter s'il y a des accents
+    serverConnection.send(messageToSend)
 
-print "Connection closed"
-serverConnexion.close()
+print("Connection closed")
+serverConnection.close()
