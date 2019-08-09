@@ -17,5 +17,6 @@ maps = loadMaps()
 map = chooseMap(maps)
 
 while not endGame:
-  # Tant que la partie n'est pas finie, on demande au joueur d'entrer une commande
-  endGame = pickYourMove(map)
+    # Tant que la partie n'est pas finie,
+    # on demande au joueur d'entrer une commande
+    endGame = pickYourMove(map)

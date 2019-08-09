@@ -11,6 +11,7 @@ serverConnection.connect((host, port))
 
 print("Connection established on port {}".format(port))
 
+
 def listen():
     """Code à exécuter pendant l'exécution du thread."""
     while True:

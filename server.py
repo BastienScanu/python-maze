@@ -14,7 +14,7 @@ import select
 host = ''
 port = 42000
 # statut de la partie :
-#  - WAITING tant que les joueurs se connectent et que la partie n'a pas encore commencé
+#  - WAITING tant que les joueurs se connectent
 #  - PLAYING pendant toute la durée de la partie
 #  - FINISHED quand la partie est terminée
 gameStatus = "WAITING"
@@ -36,24 +36,27 @@ mainConnection.listen(5)
 print("Server listening on port {}".format(port))
 
 players = []
+# Boucle principale du jeu, qui tourne jusqu'à ce que la partie finisse
 while gameStatus != "FINISHED":
     # On va vérifier que de nouveaux clients ne demandent pas à se connecter
     # Pour cela, on écoute la connexion_principale en lecture
     # On attend maximum 50ms
     askToPlay, wlist, xlist = select.select([mainConnection], [], [], 0.05)
-    
-    for connection in askToPlay:
-        if gameStatus == "WAITING":
-          playerConnection, info = connection.accept()
-          playerNumber = playerNumber + 1
-          message = ("Welcome, you are player" + str(playerNumber)).encode()
-          playerConnection.send(message)
-          print("Player {} is connected !".format(playerNumber))
-          # On ajoute le socket connecté à la liste des clients
-          players.append(playerConnection)
-        else:
-          print("Connexion refused, the game already started")
-      
+
+    if gameStatus == "WAITING":
+
+        for connection in askToPlay:
+                playerConnection, info = connection.accept()
+                playerNumber = playerNumber + 1
+                message = ("Welcome, you are player" + str(playerNumber)).encode()
+                playerConnection.send(message)
+                print("Player {} is connected !".format(playerNumber))
+                # On ajoute le socket connecté à la liste des clients
+                players.append(playerConnection)
+    else:
+        print("Connection refused, the game already started")
+        connection.close()
+
     # Maintenant, on écoute la liste des clients connectés
     # Les clients renvoyés par select sont ceux devant être lus (recv)
     # On attend là encore 50ms maximum
@@ -66,7 +69,6 @@ while gameStatus != "FINISHED":
     except select.error:
         pass
     else:
-        # On parcourt la liste des clients à lire
         for player in playersToRead:
             # Client est de type socket
             receivedMessage = player.recv(1024)
@@ -75,10 +77,11 @@ while gameStatus != "FINISHED":
             print("Reçu {}".format(receivedMessage))
             player.send(b"5 / 5")
             if receivedMessage == "fin":
-                onGoingGame = False
+                gameStatus = "FINISHED"
+            elif receivedMessage.lower() == "c":
+                gameStatus = "PLAYING"
 
 print("Closing connections")
 for player in players:
     player.close()
-
 mainConnection.close()
